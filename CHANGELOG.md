@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.2.208](https://www.github.com/werf/werf/compare/v1.2.207...v1.2.208) (2023-03-10)
+
+
+### Bug Fixes
+
+* docs/Gemfile & docs/Gemfile.lock to reduce vulnerabilities ([aca4bd1](https://www.github.com/werf/werf/commit/aca4bd1ee1fdeb8b54a2c083205507346ab4a3ec))
+* playground/Dockerfile.ghost to reduce vulnerabilities ([8d4cca9](https://www.github.com/werf/werf/commit/8d4cca999d582fbb33ac6393f26d98527fdde1d5))
+
 ### [1.2.207](https://www.github.com/werf/werf/compare/v1.2.206...v1.2.207) (2023-03-09)
 
 
