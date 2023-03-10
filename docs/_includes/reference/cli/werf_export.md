@@ -26,6 +26,12 @@ werf export [IMAGE_NAME...] [options]
 {{ header }} Options
 
 ```shell
+      --add-label=[]
+            Add label to exported images (can specify multiple).
+            Format: labelName=labelValue.
+            Also, can be specified with $WERF_EXPORT_ADD_LABEL_* (e.g.                              
+            $WERF_EXPORT_ADD_LABEL_1=labelName1=labelValue1,                                        
+            $WERF_EXPORT_ADD_LABEL_2=labelName2=labelValue2)
       --cache-repo=[]
             Specify one or multiple cache repos with images that will be used as a cache. Cache     
             will be populated when pushing newly built images into the primary repo and when        
