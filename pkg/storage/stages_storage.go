@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"strings"
+
+	v1 "github.com/google/go-containerregistry/pkg/v1"
 
 	"github.com/werf/werf/pkg/container_backend"
 	"github.com/werf/werf/pkg/image"
