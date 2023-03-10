@@ -17,6 +17,7 @@ import (
 	"github.com/werf/werf/pkg/build/stage"
 	"github.com/werf/werf/pkg/config"
 	"github.com/werf/werf/pkg/container_backend"
+	"github.com/werf/werf/pkg/container_backend/thirdparty/platformutil"
 	"github.com/werf/werf/pkg/git_repo"
 	"github.com/werf/werf/pkg/giterminism_manager"
 	imagePkg "github.com/werf/werf/pkg/image"
@@ -65,6 +66,7 @@ type ConveyorOptions struct {
 	Parallel                        bool
 	ParallelTasksLimit              int64
 	LocalGitRepoVirtualMergeOptions stage.VirtualMergeOptions
+	TargetPlatforms                 []string
 
 	ImagesToProcess
 }
@@ -114,6 +116,27 @@ func NewConveyor(werfConfig *config.WerfConfig, giterminismManager giterminism_m
 	})
 
 	return c
+}
+
+func (c *Conveyor) GetTargetPlatforms() ([]string, error) {
+	if len(c.ConveyorOptions.TargetPlatforms) > 0 {
+		return c.ConveyorOptions.TargetPlatforms, nil
+	}
+
+	for _, p := range c.werfConfig.Meta.Build.Platform {
+		parts := strings.Split(p, ",")
+		if len(parts) > 1 {
+			return nil, fmt.Errorf("invalid platform specified %q: specify multiple platforms using yaml array", p)
+		}
+	}
+
+	specs, err := platformutil.Parse(c.werfConfig.Meta.Build.Platform)
+	if err != nil {
+		return nil, err
+	}
+	specs = platformutil.Dedupe(specs)
+
+	return platformutil.Format(specs), nil
 }
 
 func (c *Conveyor) GetServiceRWMutex(service string) *sync.RWMutex {

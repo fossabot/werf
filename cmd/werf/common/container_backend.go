@@ -98,6 +98,13 @@ func InitProcessContainerBackend(ctx context.Context, cmdData *CmdData) (contain
 		}
 
 		insecure := *cmdData.InsecureRegistry || *cmdData.SkipTlsVerifyRegistry
+
+		// FIXME(multiarch): rework container backend platform initialization, specify platform only when running build operation
+		var platform string
+		if len(cmdData.GetPlatform()) > 0 {
+			platform = cmdData.GetPlatform()[0]
+		}
+
 		b, err := buildah.NewBuildah(*buildahMode, buildah.BuildahOpts{
 			CommonBuildahOpts: buildah.CommonBuildahOpts{
 				TmpDir:        filepath.Join(werf.GetServiceDir(), "tmp", "buildah"),
@@ -105,9 +112,7 @@ func InitProcessContainerBackend(ctx context.Context, cmdData *CmdData) (contain
 				Isolation:     buildahIsolation,
 				StorageDriver: storageDriver,
 			},
-			NativeModeOpts: buildah.NativeModeOpts{
-				Platform: *cmdData.Platform,
-			},
+			NativeModeOpts: buildah.NativeModeOpts{Platform: platform},
 		})
 		if err != nil {
 			return nil, ctx, fmt.Errorf("unable to get buildah client: %w", err)
@@ -126,7 +131,13 @@ func InitProcessContainerBackend(ctx context.Context, cmdData *CmdData) (contain
 }
 
 func InitProcessDocker(ctx context.Context, cmdData *CmdData) (context.Context, error) {
-	if err := docker.Init(ctx, *cmdData.DockerConfig, *cmdData.LogVerbose, *cmdData.LogDebug, *cmdData.Platform); err != nil {
+	// FIXME(multiarch): rework container backend platform initialization, specify platform only when running build operation
+	var platform string
+	if len(cmdData.GetPlatform()) > 0 {
+		platform = cmdData.GetPlatform()[0]
+	}
+
+	if err := docker.Init(ctx, *cmdData.DockerConfig, *cmdData.LogVerbose, *cmdData.LogDebug, platform); err != nil {
 		return ctx, fmt.Errorf("unable to init docker for buildah container backend: %w", err)
 	}
 

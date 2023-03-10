@@ -72,7 +72,7 @@ Currently supported only GitLab (gitlab) and GitHub (github) CI systems`,
 	common.SetupHomeDir(&commonCmdData, cmd, common.SetupHomeDirOptions{})
 	common.SetupDockerConfig(&commonCmdData, cmd, "Command will copy specified or default (~/.docker) config to the temporary directory and may perform additional login with new config.")
 
-	common.SetupPlatform(&commonCmdData, cmd)
+	commonCmdData.SetupPlatform(cmd)
 
 	common.SetupLogOptions(&commonCmdData, cmd)
 
@@ -117,7 +117,13 @@ func runCIEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if err := docker.Init(ctx, dockerConfig, *commonCmdData.LogVerbose, *commonCmdData.LogDebug, *commonCmdData.Platform); err != nil {
+	var platform string
+	if len(commonCmdData.GetPlatform()) > 0 {
+		platform = commonCmdData.GetPlatform()[0]
+	}
+	// FIXME(multiarch): do not initialize platform in backend here
+	// FIXME(multiarch): why docker initialization here? what if buildah backend enabled?
+	if err := docker.Init(ctx, dockerConfig, *commonCmdData.LogVerbose, *commonCmdData.LogDebug, platform); err != nil {
 		return fmt.Errorf("docker init failed in dir %q: %w", dockerConfig, err)
 	}
 
